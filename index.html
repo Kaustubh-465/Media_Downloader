@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Downloader</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        input { padding: 10px; width: 300px; }
+        button { padding: 10px 20px; cursor: pointer; }
+        #result { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>Media Downloader</h1>
+    <input type="text" id="urlInput" placeholder="Paste your media link here...">
+    <button onclick="startDownload()">Download</button>
+
+    <div id="result"></div>
+
+    <script>
+        async function startDownload() {
+            const url = document.getElementById('urlInput').value;
+            const resultDiv = document.getElementById('result');
+
+         
+            resultDiv.innerText = "Processing...";
+
+            try {
+                // Replace this URL with your actual backend URL once deployed (e.g., on Render)
+                const response = await fetch('http://127.0.0.1:5000/download', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url: url })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultDiv.innerHTML = `<a href="${data.download_link}" target="_blank">Click here to download</a>`;
+                } else {
+                    resultDiv.innerText = "Error: " + data.error;
+                }
+            } catch (error) {
+                resultDiv.innerText = "Failed to connect to the server.";
+            }
+        }
+    </script>
+</body>
+</html>
